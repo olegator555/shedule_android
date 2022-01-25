@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Расписание</string>
+    <string name="main_header">Расписание</string>
+    <string name="find">Найти</string>
+    <string name="from">Откуда</string>
+    <string name="to">Куда</string>
+    <string name="date">Дата</string>
+    <string name="loading">Loading...</string>
+    <string name="primary_country_choice">Выберите страну</string>
+    <string name="country_choose">Выбор страны</string>
+    <string name="set_with_code">Установка кодом</string>
+    <string-array name="date_list">
+        <item>Сегодня</item>
+        <item>Завтра</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
