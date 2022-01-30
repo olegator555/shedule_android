@@ -4,32 +4,25 @@
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent">
 
-    <androidx.cardview.widget.CardView android:layout_width="wrap_content"
-                                       android:layout_height="wrap_content"
-                                       app:layout_constraintStart_toStartOf="parent"
-                                       app:layout_constraintTop_toTopOf="parent"
-                                       android:padding="@dimen/material_emphasis_high_type"
-                                       app:cardBackgroundColor="@color/cardview_shadow_end_color"
-                                       app:cardCornerRadius="10sp">
-        <RelativeLayout android:layout_height="match_parent"
-                        android:layout_width="match_parent">
-            <TextView
-                    android:text="@string/set_with_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:textSize="20sp"
-                    android:id="@+id/fragmentHeader"/>
-            <AutoCompleteTextView android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:id="@+id/fragmentAutocomplete"
-                                  android:hint="Выбрать..."
-                                  android:layout_centerHorizontal="true"
-                                  android:layout_below="@id/fragmentHeader"
-                                  android:layout_marginTop="20sp"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
 
+    <TextView
+            android:text="@string/set_with_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_bold"
+            android:textSize="20sp"
+            android:id="@+id/fragmentHeader" android:layout_alignParentEnd="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+    <AutoCompleteTextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/fragmentAutocomplete"
+                          android:hint="Выбрать..."
+                          android:layout_centerHorizontal="true"
+                          android:layout_below="@id/fragmentHeader"
+                          app:layout_constraintStart_toStartOf="parent"
+                          app:layout_constraintEnd_toEndOf="parent"
+                          app:layout_constraintTop_toBottomOf="@+id/fragmentHeader" android:layout_marginTop="20dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

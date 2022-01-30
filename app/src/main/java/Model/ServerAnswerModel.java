@@ -6,18 +6,18 @@ import android.os.Parcelable;
 public class ServerAnswerModel implements Parcelable {
     private String country;
     private String region;
+    private String settlement;
     private String direction;
-    private String station_type;
+    private String station_name;
     private String yandex_code;
-    private String transport_type;
 
     public ServerAnswerModel(Parcel in) {
         country = in.readString();
         region = in.readString();
+        settlement = in.readString();
         direction = in.readString();
-        station_type = in.readString();
+        station_name = in.readString();
         yandex_code = in.readString();
-        transport_type = in.readString();
     }
 
     public static final Creator<ServerAnswerModel> CREATOR = new Creator<ServerAnswerModel>() {
@@ -50,6 +50,10 @@ public class ServerAnswerModel implements Parcelable {
         this.region = region;
     }
 
+    public String getSettlement() { return settlement; }
+
+    public void setSettlement(String settlement) { this.settlement = settlement; }
+
     public String getDirection() {
         return direction;
     }
@@ -58,12 +62,12 @@ public class ServerAnswerModel implements Parcelable {
         this.direction = direction;
     }
 
-    public String getStation_type() {
-        return station_type;
+    public String getStation_name() {
+        return station_name;
     }
 
-    public void setStation_type(String station_type) {
-        this.station_type = station_type;
+    public void setStation_name(String station_name) {
+        this.station_name = station_name;
     }
 
     public String getYandex_code() {
@@ -74,26 +78,28 @@ public class ServerAnswerModel implements Parcelable {
         this.yandex_code = yandex_code;
     }
 
-    public String getTransport_type() {
-        return transport_type;
-    }
-
-    public void setTransport_type(String transport_type) {
-        this.transport_type = transport_type;
-    }
 
     @Override
     public int describeContents() {
         return 0;
     }
 
+    public ServerAnswerModel(String country, String region, String settlement, String direction, String station_name, String yandex_code) {
+        this.country = country;
+        this.region = region;
+        this.settlement = settlement;
+        this.direction = direction;
+        this.station_name = station_name;
+        this.yandex_code = yandex_code;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(country);
         parcel.writeString(region);
+        parcel.writeString(settlement);
         parcel.writeString(direction);
-        parcel.writeString(station_type);
+        parcel.writeString(station_name);
         parcel.writeString(yandex_code);
-        parcel.writeString(transport_type);
     }
 }

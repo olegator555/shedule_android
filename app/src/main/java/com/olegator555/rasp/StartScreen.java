@@ -1,8 +1,9 @@
 package com.olegator555.rasp;
 
-import Model.ServerAnswerModel;
 import Utils.GetRequest;
+import Utils.JsonParser;
 import Utils.UrlCreator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 
 public class StartScreen extends AppCompatActivity {
     ProgressBar progressBar;
@@ -27,6 +27,8 @@ public class StartScreen extends AppCompatActivity {
         GetRequest stations_list_request = new StationLisRequest();
         stations_list_request.execute(new UrlCreator().getStationsListUrl());
     }
+
+    @SuppressLint("StaticFieldLeak")
     private class StationLisRequest extends GetRequest {
 
         protected void onPreExecute() {
@@ -44,21 +46,14 @@ public class StartScreen extends AppCompatActivity {
             super.onPostExecute(res);
             progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(StartScreen.this, First_launch.class);
-            ArrayList<ServerAnswerModel> stations_list = new ArrayList<>();
             try {
                 JSONObject top_levelObject = new JSONObject(res);
                 JSONArray jsonArray = top_levelObject.getJSONArray("countries");
-                for(int i=0; i<jsonArray.length();i++){
-                    String country = jsonArray.getJSONObject(i).getString("title");
-                    ServerAnswerModel serverAnswerModel = new ServerAnswerModel();
-                    serverAnswerModel.setCountry(country);
-                    stations_list.add(serverAnswerModel);
-
-                }
+                JsonParser jsonParser = new JsonParser(jsonArray, getBaseContext());
+                jsonParser.write_to_db();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            intent.putExtra("Response", stations_list);
             startActivity(intent);
 
         }

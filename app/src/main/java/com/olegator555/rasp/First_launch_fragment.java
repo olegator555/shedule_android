@@ -30,6 +30,9 @@ public class First_launch_fragment extends Fragment {
     public First_launch_fragment() {
         // Required empty public constructor
     }
+    public <T> T get_field_data() {
+        return (T)autoCompleteTextView.getText().toString();
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -52,12 +55,7 @@ public class First_launch_fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(First_launch.HEADER_KEY, "Null");
-            mParam2 = getArguments().getStringArrayList(First_launch.DATA_LIST_KEY);
 
-
-        }
 
     }
 
@@ -68,8 +66,12 @@ public class First_launch_fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_first_launch_fragment, container, false);
         textView = view.findViewById(R.id.fragmentHeader);
         autoCompleteTextView = view.findViewById(R.id.fragmentAutocomplete);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(First_launch.HEADER_KEY);
+            mParam2 = getArguments().getStringArrayList(First_launch.DATA_LIST_KEY);
+        }
         textView.setText(mParam1);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1,
                 mParam2);
         autoCompleteTextView.setAdapter(adapter);
         return view;
