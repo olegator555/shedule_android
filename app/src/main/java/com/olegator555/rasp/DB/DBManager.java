@@ -31,7 +31,7 @@ public class DBManager {
         contentValues.put(SETTLEMENT, model.getSettlement());
         contentValues.put(DIRECTION, model.getDirection());
         contentValues.put(STATION_NAME, model.getStation_name());
-        contentValues.put(YANDEX_CODE, model.getYandex_code());
+        contentValues.put(YANDEX_CODE, model.getYandex_code().substring(1));
         database.insert(TABLE_NAME, null, contentValues);
     }
     public ArrayList<String> getTitleList(@Nullable String country){
@@ -41,7 +41,7 @@ public class DBManager {
             cursor = database.rawQuery("SELECT " + COUNTRY + " FROM " + TABLE_NAME, null);
         else
             cursor = database.rawQuery("SELECT " + REGION + " FROM " + TABLE_NAME + " WHERE "
-                    + REGION + " = " + country, null);
+                    + COUNTRY + " = " + country, null);
         while (cursor.moveToNext())
         {
             String element;

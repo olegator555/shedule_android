@@ -11,7 +11,7 @@ public class DBProvider extends SQLiteOpenHelper {
     private static final String CREATE_DATABASE = "CREATE TABLE " + TABLE_NAME + " ("
             + COUNTRY + " TEXT," + REGION
             + " TEXT," + SETTLEMENT + " TEXT," + DIRECTION +
-            " TEXT," + STATION_NAME + " TEXT," + YANDEX_CODE + " TEXT PRIMARY KEY)";
+            " TEXT," + STATION_NAME + " TEXT," + YANDEX_CODE + " INTEGER PRIMARY KEY)";
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public DBProvider(@Nullable Context context) {

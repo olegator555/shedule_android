@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 addapter_list);
         to_edit_text.setAdapter(arrayAdapter);
-        from_editText.setAdapter(arrayAdapter);
+        from_editText.setAdapter(arrayAdapter); 
 
         constraintLayout = findViewById(R.id.main_constraint_layout);
         constraintLayout.setOnTouchListener(new OnSwipeListener(this){

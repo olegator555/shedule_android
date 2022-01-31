@@ -1,5 +1,6 @@
 package com.olegator555.rasp;
 
+import Model.ServerAnswerModel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -33,7 +34,13 @@ public class First_launch extends AppCompatActivity {
         setContentView(R.layout.activity_first_launch);
         dbManager = new DBManager(this);
         dbManager.openDB();
-        ArrayList<String> countryArrayList = dbManager.getTitleList(null);
+        ArrayList<ServerAnswerModel> modelList = dbManager.getStationsList(null);
+        ArrayList<String> countryArrayList = new ArrayList<>();
+        modelList.forEach(element-> {
+            if (!countryArrayList.contains(element.getCountry())) {
+                countryArrayList.add(element.getCountry());
+            }
+        });
         First_launch_fragment fragment = First_launch_fragment.newInstance("Введите страну",
                 countryArrayList);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment).commit();

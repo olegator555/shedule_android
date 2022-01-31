@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -50,8 +49,8 @@ public class StartScreen extends AppCompatActivity {
                 JSONObject top_levelObject = new JSONObject(res);
                 JSONArray jsonArray = top_levelObject.getJSONArray("countries");
                 JsonParser jsonParser = new JsonParser(jsonArray, getBaseContext());
-                jsonParser.write_to_db();
-            } catch (JSONException e) {
+                jsonParser.parse_json_into_db();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             startActivity(intent);
