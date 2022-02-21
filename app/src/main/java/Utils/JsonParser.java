@@ -2,55 +2,92 @@ package Utils;
 
 import Model.ServerAnswerModel;
 import android.content.Context;
-import android.util.Log;
 import com.olegator555.rasp.DB.DBManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonParser  {
-    private final JSONArray topLevelJsonArray;
-    private DBManager dbManager;
+import java.util.ArrayList;
+import java.util.List;
 
-    public JsonParser(JSONArray topLevelJsonArray, Context context) {
-        this.topLevelJsonArray = topLevelJsonArray;
-        dbManager = new DBManager(context);
+public class JsonParser  {
+    private JSONArray topLevelJsonArray;
+    private List<ServerAnswerModel> stations_list;
+    Context context;
+    String selected_country, selected_region;
+
+    public JsonParser(String json_string, Context context) {
+        try {
+            JSONObject top_levelObject = new JSONObject(json_string);
+            this.topLevelJsonArray = top_levelObject.getJSONArray("countries");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.context = context;
     }
-    public void parse_json_into_db(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                write_to_db();
+
+    public ArrayList<String> getCountriesList() {
+        ArrayList<String> result = new ArrayList<>();
+        for(int i = 0; i< topLevelJsonArray.length(); i++) {
+            try {
+                String country = topLevelJsonArray.getJSONObject(i).getString("title");
+                result.add(country);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
+        }
+        return result;
     }
-    private void write_to_db() {
-        dbManager.openDB();
+    public ArrayList<String> getRegionsList(String selected_country) {
+        ArrayList<String> result = new ArrayList<>();
+        for(int i = 0; i< topLevelJsonArray.length(); i++) {
+            try {
+                String country = topLevelJsonArray.getJSONObject(i).getString("title");
+                if(country.equals(selected_country)) {
+                    JSONObject regionsLevelJsonObject = topLevelJsonArray.getJSONObject(i);
+                    JSONArray regionsLevelJsonArray = regionsLevelJsonObject.getJSONArray("regions");
+                    for (int j = 0; j < regionsLevelJsonArray.length(); j++) {
+                        String region = regionsLevelJsonArray.getJSONObject(j).getString("title");
+                        result.add(region);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    private void parseJson() {
+        stations_list = new ArrayList<>();
         for(int i = 0; i< topLevelJsonArray.length(); i++){
             try {
                 String country = topLevelJsonArray.getJSONObject(i).getString("title");
-                JSONObject regionsLevelJsonObject = topLevelJsonArray.getJSONObject(i);
-                JSONArray regionsLevelJsonArray = regionsLevelJsonObject.getJSONArray("regions");
-                for(int j = 0; j<regionsLevelJsonArray.length();j++){
-                    String region = regionsLevelJsonArray.getJSONObject(j).getString("title");
-                    JSONObject settlementsLevelJsonObject = regionsLevelJsonArray.getJSONObject(j);
-                    JSONArray settlementsLevelJsonArray = settlementsLevelJsonObject.getJSONArray("settlements");
-                    for(int k=0; k<settlementsLevelJsonArray.length(); k++) {
-                        String settlement = settlementsLevelJsonArray.getJSONObject(k).getString("title");
-                        JSONObject stationsLevelJsonObject = settlementsLevelJsonArray.getJSONObject(k);
-                        JSONArray stationsLevelJsonArray = stationsLevelJsonObject.getJSONArray("stations");
-                        for(int z=0; z<stationsLevelJsonArray.length(); z++) {
-                            String station_name = stationsLevelJsonArray.getJSONObject(z).getString("title");
-                            String direction = stationsLevelJsonArray.getJSONObject(z).getString("direction");
-                            // FIXME: 31/01/2022
-                            JSONObject codeLevelJsonObject = stationsLevelJsonArray.getJSONObject(z);
-                            JSONObject yandex_code_jbject = codeLevelJsonObject.getJSONObject("codes");
-                            String yandex_code = yandex_code_jbject.getString("yandex_code");
-                            Log.d("tag", yandex_code);
-                            ServerAnswerModel serverAnswerModel = new ServerAnswerModel(country,region,settlement,
-                                        direction,station_name,yandex_code);
+                if(country.equals(selected_country)) {
+                    JSONObject regionsLevelJsonObject = topLevelJsonArray.getJSONObject(i);
+                    JSONArray regionsLevelJsonArray = regionsLevelJsonObject.getJSONArray("regions");
+                    for(int j = 0; j<regionsLevelJsonArray.length();j++){
+                        String region = regionsLevelJsonArray.getJSONObject(j).getString("title");
+                        if(region.equals(selected_region)) {
+                            JSONObject settlementsLevelJsonObject = regionsLevelJsonArray.getJSONObject(j);
+                            JSONArray settlementsLevelJsonArray = settlementsLevelJsonObject.getJSONArray("settlements");
+                            for(int k=0; k<settlementsLevelJsonArray.length(); k++) {
+                                String settlement = settlementsLevelJsonArray.getJSONObject(k).getString("title");
+                                JSONObject stationsLevelJsonObject = settlementsLevelJsonArray.getJSONObject(k);
+                                JSONArray stationsLevelJsonArray = stationsLevelJsonObject.getJSONArray("stations");
+                                for(int z=0; z<stationsLevelJsonArray.length(); z++) {
+                                    String station_name = stationsLevelJsonArray.getJSONObject(z).getString("title");
+                                    String direction = stationsLevelJsonArray.getJSONObject(z).getString("direction");
+                                    if(!direction.equals("")) {
+                                        JSONObject codeLevelJsonObject = stationsLevelJsonArray.getJSONObject(z);
+                                        JSONObject yandex_code_jbject = codeLevelJsonObject.getJSONObject("codes");
+                                        String yandex_code = yandex_code_jbject.getString("yandex_code");
+                                        ServerAnswerModel serverAnswerModel = new ServerAnswerModel(country, region, settlement,
+                                                direction, station_name, yandex_code);
+                                        stations_list.add(serverAnswerModel);
+                                    }
+                                }
+                            }
 
-                                dbManager.insert(serverAnswerModel);
                                 
                         }
 
@@ -63,8 +100,12 @@ public class JsonParser  {
 
         }
 
-        dbManager.closeDB();
-
+    }
+    public void writeToDb(String selected_country, String selected_region) {
+        this.selected_country = selected_country;
+        this.selected_region = selected_region;
+        this.parseJson();
+        new DBManager(context).insertToDb(stations_list);
     }
 
 }

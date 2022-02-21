@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+android:paddingBottom="2sp"
+android:id="@+id/stations_suggestions">
+
+    <TextView
+            android:text="@string/station_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/station_name_textview"
+            android:fontFamily="@font/montserrat_bold"
+            android:textSize="20sp"
+    />
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:text="@string/direction_name"
+    android:id="@+id/direction_text_view"
+    android:fontFamily="@font/montserrat"
+    android:textSize="16sp"
+    android:layout_below="@id/station_name_textview"
+    android:layout_marginTop="2sp">
+    </TextView>
+</RelativeLayout>

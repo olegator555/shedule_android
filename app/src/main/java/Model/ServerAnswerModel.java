@@ -3,7 +3,7 @@ package Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ServerAnswerModel implements Parcelable {
+public class ServerAnswerModel implements Parcelable, Cloneable {
     private String country;
     private String region;
     private String settlement;
@@ -75,7 +75,7 @@ public class ServerAnswerModel implements Parcelable {
     }
 
     public void setYandex_code(String yandex_code) {
-        this.yandex_code = yandex_code;
+        this.yandex_code = "s" + yandex_code;
     }
 
 
@@ -90,7 +90,7 @@ public class ServerAnswerModel implements Parcelable {
         this.settlement = settlement;
         this.direction = direction;
         this.station_name = station_name;
-        this.yandex_code = yandex_code;
+        this.yandex_code = "s" + yandex_code;
     }
 
     @Override
@@ -101,5 +101,15 @@ public class ServerAnswerModel implements Parcelable {
         parcel.writeString(direction);
         parcel.writeString(station_name);
         parcel.writeString(yandex_code);
+    }
+
+    @Override
+    public ServerAnswerModel clone() {
+        try {
+            ServerAnswerModel clone = (ServerAnswerModel) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

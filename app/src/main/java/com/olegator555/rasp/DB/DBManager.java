@@ -1,22 +1,32 @@
 package com.olegator555.rasp.DB;
 
 import Model.ServerAnswerModel;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import androidx.annotation.Nullable;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.olegator555.rasp.DB.TableModel.*;
 
 public class DBManager {
     private final DBProvider dbProvider;
     private SQLiteDatabase database;
+    private Context context;
+    public ArrayList<ServerAnswerModel> model_list = new ArrayList<>();
+    public static final String SUCCESSFULLY_INSERTED = "SuccessfullyInserted";
+    private boolean isDbClosed;
 
     public DBManager(Context context) {
         dbProvider = new DBProvider(context);
+        this.context = context;
     }
     public void openDB() {
         database = dbProvider.getWritableDatabase();
@@ -24,41 +34,51 @@ public class DBManager {
     public void closeDB() {
         database.close();
     }
-    public void insert(ServerAnswerModel model) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COUNTRY, model.getCountry());
-        contentValues.put(REGION, model.getRegion());
-        contentValues.put(SETTLEMENT, model.getSettlement());
-        contentValues.put(DIRECTION, model.getDirection());
-        contentValues.put(STATION_NAME, model.getStation_name());
-        contentValues.put(YANDEX_CODE, model.getYandex_code().substring(1));
-        database.insert(TABLE_NAME, null, contentValues);
+    public void insertToDb(List<ServerAnswerModel> modelList) {
+        new AsyncDBProvider().execute(new DBTask<Void>() {
+            @Override
+            public Void doWithDb() {
+                insert(modelList);
+                return null;
+            }
+        });
     }
-    public ArrayList<String> getTitleList(@Nullable String country){
-        ArrayList<String> list = new ArrayList<>();
-        Cursor cursor;
-        if(country!=null)
-            cursor = database.rawQuery("SELECT " + COUNTRY + " FROM " + TABLE_NAME, null);
-        else
-            cursor = database.rawQuery("SELECT " + REGION + " FROM " + TABLE_NAME + " WHERE "
-                    + COUNTRY + " = " + country, null);
-        while (cursor.moveToNext())
-        {
-            String element;
-            if(country!=null)
-                element = cursor.getString(cursor.getColumnIndex(COUNTRY));
-            else
-                element = cursor.getString(cursor.getColumnIndex(REGION));
-            list.add(element);
+    public ArrayList<ServerAnswerModel> getFromDb() {
+        AsyncDBProvider asyncDBProvider = new AsyncDBProvider();
+        try {
+            model_list = (ArrayList<ServerAnswerModel>) asyncDBProvider.execute(new DBTask<ArrayList<ServerAnswerModel>>() {
+                @Override
+                public ArrayList<ServerAnswerModel> doWithDb() {
+                    return getStationsList();
+                }
+            }).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
-        cursor.close();
-        return list;
+        Log.d("Size", String.valueOf(model_list.size()));
+        return model_list;
     }
-
-    public ArrayList<ServerAnswerModel> getStationsList(String[] selection_args){
-        ArrayList<ServerAnswerModel> list = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM "+ TABLE_NAME + " WHERE " + COUNTRY + " = ? AND "
-                + REGION + " = ?", selection_args);
+    private void insert(List<ServerAnswerModel> model_list) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SUCCESSFULLY_INSERTED,
+                Context.MODE_PRIVATE);
+        if(!sharedPreferences.contains(SUCCESSFULLY_INSERTED)) {
+            model_list.forEach(model -> {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(COUNTRY, model.getCountry());
+                contentValues.put(REGION, model.getRegion());
+                contentValues.put(SETTLEMENT, model.getSettlement());
+                contentValues.put(DIRECTION, model.getDirection());
+                contentValues.put(STATION_NAME, model.getStation_name());
+                contentValues.put(YANDEX_CODE, model.getYandex_code().substring(1));
+                database.insert(TABLE_NAME, null, contentValues);
+            });
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(SUCCESSFULLY_INSERTED, "");
+            editor.apply();
+        }
+    }
+    public ArrayList<ServerAnswerModel> getStationsList() {
+        Cursor cursor = database.rawQuery("SELECT * FROM "+ TABLE_NAME,null);
         while (cursor.moveToNext()) {
             ServerAnswerModel model = new ServerAnswerModel();
             model.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
@@ -67,9 +87,47 @@ public class DBManager {
             model.setDirection(cursor.getString(cursor.getColumnIndex(DIRECTION)));
             model.setStation_name(cursor.getString(cursor.getColumnIndex(STATION_NAME)));
             model.setYandex_code(cursor.getString(cursor.getColumnIndex(YANDEX_CODE)));
-            list.add(model);
+            model_list.add(model);
         }
         cursor.close();
-        return list;
+        return model_list;
+    }
+
+    interface DBTask <T> {
+        T doWithDb();
+    }
+    @SuppressLint("StaticFieldLeak")
+    class AsyncDBProvider extends AsyncTask<DBTask, Void, Object> {
+        private ArrayList<ServerAnswerModel> model_list = new ArrayList<>();
+
+        private void setModel_list(ArrayList<ServerAnswerModel> model_list) {
+            this.model_list.addAll(model_list);
+        }
+
+        @Override
+        protected Object doInBackground(DBTask... dbTasks) {
+            return dbTasks[0].doWithDb();
+        }
+
+
+        @Override
+        protected void onPostExecute(Object getter) {
+            super.onPostExecute(getter);
+            closeDB();
+            isDbClosed = true;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            Log.d("Tag", "in progress");
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            openDB();
+            isDbClosed = false;
+        }
     }
 }

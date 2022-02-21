@@ -1,17 +1,19 @@
 package com.olegator555.rasp;
 
+import Utils.AppLevelUtilsAndConstants;
 import Utils.GetRequest;
-import Utils.JsonParser;
 import Utils.UrlCreator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.IS_MAIN_ACTIVITY_VISITED;
+import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.JSON_STRING_KEY;
 
 
 public class StartScreen extends AppCompatActivity {
@@ -22,9 +24,25 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
         progressBar = findViewById(R.id.progressBar2);
+        progressBar.setVisibility(View.VISIBLE);
         textView = findViewById(R.id.textView);
-        GetRequest stations_list_request = new StationLisRequest();
-        stations_list_request.execute(new UrlCreator().getStationsListUrl());
+        if((Boolean)AppLevelUtilsAndConstants.readFromPreferences(this, IS_MAIN_ACTIVITY_VISITED,
+                Boolean.class)) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            Log.d("Bool", "already written, redirect");
+        }
+        else {
+            Log.d("Bool", "Not written yet");
+            GetRequest stations_list_request = new StationLisRequest();
+            stations_list_request.execute(new UrlCreator().getStationsListUrl());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressBar.setVisibility(View.GONE);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -32,7 +50,6 @@ public class StartScreen extends AppCompatActivity {
 
         protected void onPreExecute() {
             super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -43,18 +60,9 @@ public class StartScreen extends AppCompatActivity {
 
         protected void onPostExecute(String res) {
             super.onPostExecute(res);
-            progressBar.setVisibility(View.GONE);
             Intent intent = new Intent(StartScreen.this, First_launch.class);
-            try {
-                JSONObject top_levelObject = new JSONObject(res);
-                JSONArray jsonArray = top_levelObject.getJSONArray("countries");
-                JsonParser jsonParser = new JsonParser(jsonArray, getBaseContext());
-                jsonParser.parse_json_into_db();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            AppLevelUtilsAndConstants.writeToPreferences(getBaseContext(), JSON_STRING_KEY, res, String.class);
             startActivity(intent);
-
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.olegator555.rasp;
 
-import Model.ServerAnswerModel;
+import Utils.AppLevelUtilsAndConstants;
+import Utils.JsonParser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -32,30 +33,25 @@ public class First_launch extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
-        dbManager = new DBManager(this);
-        dbManager.openDB();
-        ArrayList<ServerAnswerModel> modelList = dbManager.getStationsList(null);
-        ArrayList<String> countryArrayList = new ArrayList<>();
-        modelList.forEach(element-> {
-            if (!countryArrayList.contains(element.getCountry())) {
-                countryArrayList.add(element.getCountry());
-            }
-        });
+        String jsonString = (String) AppLevelUtilsAndConstants.readFromPreferences(this,
+                AppLevelUtilsAndConstants.PreferencesKeys.JSON_STRING_KEY, String.class);
+        JsonParser jsonParser = new JsonParser(jsonString, this);
+        ArrayList<String> countryArrayList = jsonParser.getCountriesList();
         First_launch_fragment fragment = First_launch_fragment.newInstance("Введите страну",
                 countryArrayList);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment).commit();
+
         button = findViewById(R.id.imageButton);
         button.setOnClickListener(view -> {
             isPressed = true;
             selected_country = fragment.get_field_data();
-            ArrayList<String> regionArrayList = dbManager.getTitleList(selected_country);
+            ArrayList<String> regionArrayList = jsonParser.getRegionsList(selected_country);
             First_launch_fragment fragment2 = First_launch_fragment.newInstance("Введите регион",regionArrayList);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment2).commit();
             button.setOnClickListener(view1 -> {
                 selected_region = fragment2.get_field_data();
+                jsonParser.writeToDb(selected_country, selected_region);
                 Intent intent = new Intent(First_launch.this, MainActivity.class);
-                intent.putExtra("Country", selected_country);
-                intent.putExtra("Region", selected_region);
                 startActivity(intent);
             });
         });
