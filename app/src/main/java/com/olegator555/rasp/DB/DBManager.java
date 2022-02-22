@@ -69,7 +69,7 @@ public class DBManager {
                 contentValues.put(SETTLEMENT, model.getSettlement());
                 contentValues.put(DIRECTION, model.getDirection());
                 contentValues.put(STATION_NAME, model.getStation_name());
-                contentValues.put(YANDEX_CODE, model.getYandex_code().substring(1));
+                contentValues.put(YANDEX_CODE, Integer.parseInt(model.getYandex_code().substring(1)));
                 database.insert(TABLE_NAME, null, contentValues);
             });
             SharedPreferences.Editor editor = sharedPreferences.edit();

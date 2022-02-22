@@ -52,6 +52,7 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
 
     public String getSettlement() { return settlement; }
 
+
     public void setSettlement(String settlement) { this.settlement = settlement; }
 
     public String getDirection() {
@@ -79,6 +80,7 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
     }
 
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -90,7 +92,7 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
         this.settlement = settlement;
         this.direction = direction;
         this.station_name = station_name;
-        this.yandex_code = "s" + yandex_code;
+        this.yandex_code = yandex_code;
     }
 
     @Override

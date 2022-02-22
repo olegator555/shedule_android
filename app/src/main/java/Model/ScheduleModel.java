@@ -10,10 +10,10 @@ public class ScheduleModel {
     private final String stops;
     private final String number;
     private final String title;
-    private final String type_code;
+    private final String type_title;
 
     public ScheduleModel(String departure, String departure_platform, String arrival, String arrival_platform,
-                         int duration, String stops, String number, String title, String type_code) {
+                         int duration, String stops, String number, String title, String type_title) {
         this.departure = departure;
         this.departure_platform = departure_platform;
         this.arrival = arrival;
@@ -22,7 +22,7 @@ public class ScheduleModel {
         this.stops = stops;
         this.number = number;
         this.title = title;
-        this.type_code = type_code;
+        this.type_title = type_title;
     }
 
     public String getDeparture() {
@@ -57,7 +57,7 @@ public class ScheduleModel {
         return title;
     }
 
-    public String getType_code() {
-        return type_code;
+    public String getType_title() {
+        return type_title;
     }
 }
