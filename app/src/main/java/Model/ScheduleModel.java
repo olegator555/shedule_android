@@ -2,11 +2,11 @@ package Model;
 
 
 public class ScheduleModel {
-    private final String departure;
+    private String departure;
     private final String departure_platform;
-    private final String arrival;
+    private String arrival;
     private final String arrival_platform;
-    private final int duration;
+    private String duration;
     private final String stops;
     private final String number;
     private final String title;
@@ -18,12 +18,16 @@ public class ScheduleModel {
         this.departure_platform = departure_platform;
         this.arrival = arrival;
         this.arrival_platform = arrival_platform;
-        this.duration = duration;
+        this.duration = String.valueOf(duration);
         this.stops = stops;
         this.number = number;
         this.title = title;
         this.type_title = type_title;
+        this.splitTime();
+        this.formatDuration();
     }
+
+
 
     public String getDeparture() {
         return departure;
@@ -41,7 +45,7 @@ public class ScheduleModel {
         return arrival_platform;
     }
 
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 
@@ -59,5 +63,23 @@ public class ScheduleModel {
 
     public String getType_title() {
         return type_title;
+    }
+
+    private void splitTime() {
+        int splitTokenIndex = departure.indexOf(":");
+        departure = departure.substring(splitTokenIndex-2, splitTokenIndex+3);
+        splitTokenIndex = arrival.indexOf(":");
+        arrival = arrival.substring(splitTokenIndex-2, splitTokenIndex+3);
+    }
+    private void formatDuration() {
+        StringBuilder durationBuilder = new StringBuilder();
+        int seconds = Integer.parseInt(duration);
+        int hh = seconds/3600;
+        if(hh!=0)
+            durationBuilder.append(hh).append(" ").append("ч.");
+        int mm = seconds/60;
+        durationBuilder.append(mm).append(" ").append("мин");
+        duration = durationBuilder.toString();
+
     }
 }

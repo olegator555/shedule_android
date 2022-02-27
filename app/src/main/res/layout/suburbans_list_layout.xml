@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:layout_width="match_parent"
-                                                   android:layout_height="match_parent">
+                                                   android:layout_height="wrap_content"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        android:background="@color/material_blue_grey_50"
+        >
 
     <TextView
             android:text="15:44"
@@ -12,7 +16,18 @@
             android:id="@+id/departureTimeTeextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"/>
+
+    <TextView
+            android:text="Платформа 2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/departurePlatformTextView"
+            android:layout_below="@+id/departureTimeTeextView"
+            app:layout_constraintStart_toStartOf="@+id/departureTimeTeextView"
+            android:gravity="start"
+            app:layout_constraintTop_toBottomOf="@+id/departureTimeTeextView"
             android:layout_marginTop="10dp"/>
 
     <TextView
@@ -24,6 +39,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"/>
+
+    <TextView
+            android:text="Стандарт плюс"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/typeTitleTextView"
+            app:layout_constraintStart_toEndOf="@+id/departurePlatformTextView"
+            app:layout_constraintEnd_toStartOf="@+id/arrivalPlatformTextView"
+            app:layout_constraintTop_toBottomOf="@+id/travelTimeTextView"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"/>
+
     <TextView
             android:text="17 минут"
             android:layout_width="wrap_content"
@@ -31,15 +58,6 @@
             app:layout_constraintStart_toEndOf="@+id/departureTimeTeextView"
             app:layout_constraintEnd_toStartOf="@+id/arrivalTimeTextView"
             app:layout_constraintTop_toTopOf="@+id/departureTimeTeextView"/>
-
-    <TextView
-            android:text="Платформа 2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/departurePlatformTextView"
-            app:layout_constraintTop_toBottomOf="@+id/departureTimeTeextView"
-            android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="@+id/departureTimeTeextView"/>
 
     <TextView
             android:text="Платформа 1"
@@ -50,13 +68,4 @@
             app:layout_constraintTop_toBottomOf="@+id/arrivalTimeTextView"
             android:layout_marginTop="15dp"/>
 
-    <TextView
-            android:text="Стандарт плюс"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/typeTitleTextView"
-            app:layout_constraintStart_toEndOf="@+id/departurePlatformTextView"
-            app:layout_constraintEnd_toStartOf="@+id/arrivalPlatformTextView"
-            app:layout_constraintTop_toBottomOf="@+id/travelTimeTextView"
-            android:layout_marginTop="15dp"/>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

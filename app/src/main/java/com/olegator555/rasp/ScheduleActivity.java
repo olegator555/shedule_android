@@ -8,7 +8,9 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -61,8 +63,11 @@ public class ScheduleActivity extends AppCompatActivity {
         suburbans_list = findViewById(R.id.scheduleRecyclerView);
         progressBar = findViewById(R.id.scheduleProgressBar);
         service_text_view.setVisibility(View.GONE);
-        suburbans_list.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        suburbans_list.setLayoutManager(linearLayoutManager);
         suburbans_list.setAdapter(adapter);
+        linearLayoutManager.scrollToPositionWithOffset(15,0);
 
         Log.d("Codes: ", departure_item.getYandex_code() + " - " + destination_item.getYandex_code());
         date_text_view.setText(date.toString());

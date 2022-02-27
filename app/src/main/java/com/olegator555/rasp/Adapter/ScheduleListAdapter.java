@@ -1,6 +1,7 @@
 package com.olegator555.rasp.Adapter;
 
 import Model.ScheduleModel;
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         Log.d("list size from adapter", String.valueOf(modelList.size()));
         return modelList.size();
     }
+    @SuppressLint("NotifyDataSetChanged")
     public void updateModelList(ArrayList<ScheduleModel> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();

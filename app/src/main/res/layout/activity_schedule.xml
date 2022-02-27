@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/scheduleProgressBar"
                 android:layout_gravity="center"/>
-        <androidx.recyclerview.widget.RecyclerView android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
                                                    android:layout_gravity="center"
                                                    android:id="@+id/scheduleRecyclerView"
@@ -57,5 +57,7 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/serviceTextView" tools:layout_editor_absoluteY="58dp"
-            app:layout_constraintEnd_toStartOf="@+id/schedule_date" app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintEnd_toStartOf="@+id/schedule_date"
+            app:layout_constraintStart_toStartOf="parent">
+    </TextView>
 </androidx.constraintlayout.widget.ConstraintLayout>
