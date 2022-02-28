@@ -19,10 +19,9 @@ import static com.olegator555.rasp.DB.TableModel.*;
 public class DBManager {
     private final DBProvider dbProvider;
     private SQLiteDatabase database;
-    private Context context;
+    private final Context context;
     public ArrayList<ServerAnswerModel> model_list = new ArrayList<>();
     public static final String SUCCESSFULLY_INSERTED = "SuccessfullyInserted";
-    private boolean isDbClosed;
 
     public DBManager(Context context) {
         dbProvider = new DBProvider(context);
@@ -46,12 +45,8 @@ public class DBManager {
     public ArrayList<ServerAnswerModel> getFromDb() {
         AsyncDBProvider asyncDBProvider = new AsyncDBProvider();
         try {
-            model_list = (ArrayList<ServerAnswerModel>) asyncDBProvider.execute(new DBTask<ArrayList<ServerAnswerModel>>() {
-                @Override
-                public ArrayList<ServerAnswerModel> doWithDb() {
-                    return getStationsList();
-                }
-            }).get();
+            model_list = (ArrayList<ServerAnswerModel>) asyncDBProvider.execute((DBTask<ArrayList<ServerAnswerModel>>)
+                    () -> getStationsList()).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -114,7 +109,6 @@ public class DBManager {
         protected void onPostExecute(Object getter) {
             super.onPostExecute(getter);
             closeDB();
-            isDbClosed = true;
         }
 
         @Override
@@ -127,7 +121,6 @@ public class DBManager {
         protected void onPreExecute() {
             super.onPreExecute();
             openDB();
-            isDbClosed = false;
         }
     }
 }

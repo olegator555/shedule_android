@@ -8,12 +8,9 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
@@ -44,6 +41,7 @@ public class ScheduleActivity extends AppCompatActivity {
     private ArrayList<ScheduleModel> scheduleModels = new ArrayList<>();
     private ArrayList<ScheduleModel> tempList = new ArrayList<>();
     private ScheduleListAdapter adapter = new ScheduleListAdapter(scheduleModels);
+    private int listPosition;
 
     public synchronized void setJson_string(String json_string) {
         this.json_string = json_string;
@@ -67,7 +65,6 @@ public class ScheduleActivity extends AppCompatActivity {
 
         suburbans_list.setLayoutManager(linearLayoutManager);
         suburbans_list.setAdapter(adapter);
-        linearLayoutManager.scrollToPositionWithOffset(15,0);
 
         Log.d("Codes: ", departure_item.getYandex_code() + " - " + destination_item.getYandex_code());
         date_text_view.setText(date.toString());
@@ -85,7 +82,8 @@ public class ScheduleActivity extends AppCompatActivity {
     }
 
     private void getSchedule(String url) {
-        @SuppressLint("NotifyDataSetChanged") JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+        @SuppressLint("NotifyDataSetChanged") JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
+                null, response -> {
             try {
                 JSONArray segmentsArray = response.getJSONArray("segments");
                 for(int i= 0; i<segmentsArray.length(); i++) {
@@ -108,7 +106,8 @@ public class ScheduleActivity extends AppCompatActivity {
                 }
                 scheduleModels.clear();
                 scheduleModels.addAll(tempList);
-                adapter.updateModelList(scheduleModels);
+                listPosition = adapter.updateModelList(scheduleModels);
+                suburbans_list.scrollToPosition(listPosition);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

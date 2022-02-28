@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapter.ScheduleListViewHolder>{
     private List<ScheduleModel> modelList;
+    private boolean isListFilled = false;
 
     public ScheduleListAdapter(List<ScheduleModel> modelsList) {
         modelList = new ArrayList<>(modelsList);
@@ -39,11 +40,19 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         Log.d("list size from adapter", String.valueOf(modelList.size()));
         return modelList.size();
     }
+
+    public boolean isListFilled() {
+        return isListFilled;
+    }
+
     @SuppressLint("NotifyDataSetChanged")
-    public void updateModelList(ArrayList<ScheduleModel> modelList) {
+    public int updateModelList(ArrayList<ScheduleModel> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();
+        isListFilled = true;
+        return 10;
     }
+
 
     class ScheduleListViewHolder extends RecyclerView.ViewHolder {
         private TextView departureTextView;
