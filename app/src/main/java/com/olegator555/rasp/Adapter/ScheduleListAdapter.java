@@ -45,10 +45,6 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         return modelList.size();
     }
 
-    public boolean isListFilled() {
-        return isListFilled;
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     public int updateModelList(@NonNull ArrayList<ScheduleModel> modelList) {
         this.modelList = modelList;

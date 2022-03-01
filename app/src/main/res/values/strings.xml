@@ -18,4 +18,10 @@
     <string name="station_name">Название станции</string>
     <string name="direction_name">Направление</string>
     <string name="from_to">Откуда - Куда</string>
+    <string name="title_activity_bottom_navbar">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="straight_to">Туда</string>
+    <string name="from_straight">Обратно</string>
 </resources>

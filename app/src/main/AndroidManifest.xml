@@ -12,6 +12,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.Rasp">
+        <activity
+                android:name=".bottomNavbar"
+                android:label="@string/title_activity_bottom_navbar">
+        </activity>
         <activity android:name=".ScheduleActivity">
         </activity>
         <activity android:name=".First_launch">
