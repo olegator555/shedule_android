@@ -11,6 +11,8 @@ public class ScheduleModel {
     private final String number;
     private final String title;
     private final String type_title;
+    private int departure_hour;
+    private int departure_minute;
 
     public ScheduleModel(String departure, String departure_platform, String arrival, String arrival_platform,
                          int duration, String stops, String number, String title, String type_title) {
@@ -65,11 +67,21 @@ public class ScheduleModel {
         return type_title;
     }
 
+    public int getDeparture_hour() {
+        return departure_hour;
+    }
+
+    public int getDeparture_minute() {
+        return departure_minute;
+    }
+
     private void splitTime() {
         int splitTokenIndex = departure.indexOf(":");
         departure = departure.substring(splitTokenIndex-2, splitTokenIndex+3);
         splitTokenIndex = arrival.indexOf(":");
         arrival = arrival.substring(splitTokenIndex-2, splitTokenIndex+3);
+        departure_hour = Integer.parseInt(departure.substring(0,2));
+        departure_minute = Integer.parseInt(departure.substring(3));
     }
     private void formatDuration() {
         StringBuilder durationBuilder = new StringBuilder();

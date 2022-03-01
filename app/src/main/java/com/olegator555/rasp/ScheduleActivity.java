@@ -108,6 +108,7 @@ public class ScheduleActivity extends AppCompatActivity {
                 scheduleModels.addAll(tempList);
                 listPosition = adapter.updateModelList(scheduleModels);
                 suburbans_list.scrollToPosition(listPosition);
+                Log.d("Position", String.valueOf(listPosition));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

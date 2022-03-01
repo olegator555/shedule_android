@@ -12,11 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olegator555.rasp.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapter.ScheduleListViewHolder>{
     private List<ScheduleModel> modelList;
     private boolean isListFilled = false;
+    private int currentHour;
+    private int currentMinutes;
+    private int offsetIndex;
+    private int estimated;
 
     public ScheduleListAdapter(List<ScheduleModel> modelsList) {
         modelList = new ArrayList<>(modelsList);
@@ -37,7 +42,6 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
 
     @Override
     public int getItemCount() {
-        Log.d("list size from adapter", String.valueOf(modelList.size()));
         return modelList.size();
     }
 
@@ -46,11 +50,24 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public int updateModelList(ArrayList<ScheduleModel> modelList) {
+    public int updateModelList(@NonNull ArrayList<ScheduleModel> modelList) {
         this.modelList = modelList;
         notifyDataSetChanged();
         isListFilled = true;
-        return 10;
+        currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        currentMinutes = Calendar.getInstance().get(Calendar.MINUTE);
+        for (ScheduleModel element:modelList
+             ) {
+            if(element.getDeparture_hour()==currentHour)
+                if(element.getDeparture_minute()<currentMinutes) {
+                    offsetIndex++;
+                }
+            if(element.getDeparture_hour()<currentHour)
+                offsetIndex++;
+        }
+        Log.d("Cal hour", String.valueOf(currentHour));
+        Log.d("Cal minute", String.valueOf(currentMinutes));
+        return offsetIndex;
     }
 
 
@@ -61,6 +78,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         private TextView departurePlatform;
         private TextView arrivalPlatform;
         private TextView typeTitle;
+        private TextView estimatedTime;
 
         public ScheduleListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,6 +88,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
             departurePlatform = itemView.findViewById(R.id.departurePlatformTextView);
             arrivalPlatform = itemView.findViewById(R.id.arrivalPlatformTextView);
             typeTitle = itemView.findViewById(R.id.typeTitleTextView);
+            estimatedTime = itemView.findViewById(R.id.estimatedTime);
 
         }
 
@@ -80,6 +99,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
             departurePlatform.setText(element.getDeparture_platform());
             arrivalPlatform.setText(element.getArrival_platform());
             typeTitle.setText(element.getType_title());
+            estimatedTime.setText(String.valueOf(estimated));
         }
     }
 
