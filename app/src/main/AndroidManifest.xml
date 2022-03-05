@@ -13,6 +13,9 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.Rasp">
         <activity
+                android:name=".ActivityScheduleElementSelected"
+                android:exported="true"/>
+        <activity
                 android:name=".bottomNavbar"
                 android:label="@string/title_activity_bottom_navbar">
         </activity>

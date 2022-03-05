@@ -2,13 +2,16 @@ package com.olegator555.rasp.Adapter;
 
 import Model.ScheduleModel;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.olegator555.rasp.ActivityScheduleElementSelected;
 import com.olegator555.rasp.R;
 
 import java.util.ArrayList;
@@ -32,6 +35,12 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
     public ScheduleListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
          View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.suburbans_list_layout, parent,
                  false);
+         view.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+
+             }
+         });
          return new ScheduleListViewHolder(view);
     }
 
@@ -85,6 +94,14 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
             arrivalPlatform = itemView.findViewById(R.id.arrivalPlatformTextView);
             typeTitle = itemView.findViewById(R.id.typeTitleTextView);
             estimatedTime = itemView.findViewById(R.id.estimatedTime);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(itemView.getContext(), ActivityScheduleElementSelected.class);
+                    intent.putExtra("SelectedElement", modelList.get(getAdapterPosition()));
+                    view.getContext().startActivity(intent);
+                }
+            });
 
         }
 

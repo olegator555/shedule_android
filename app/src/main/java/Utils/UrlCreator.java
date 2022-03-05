@@ -7,13 +7,16 @@ public class UrlCreator {
     private String departure_station;
     private String destination_station;
     private Date date;
+    private String uid;
 
     public UrlCreator(String departure_station, String destination_station, Date date) {
         this.departure_station = departure_station;
         this.destination_station = destination_station;
         this.date = date;
     }
-
+    public UrlCreator(String uid) {
+        this.uid = uid;
+    }
 
     public UrlCreator() {}
     public String getScheduleUrl() {
@@ -22,5 +25,8 @@ public class UrlCreator {
     }
     public String getStationsListUrl() {
         return "https://api.rasp.yandex.net/v3.0/stations_list/?apikey=" + API_KEY + "&lang=ru_RU&format=json";
+    }
+    public String getRouteUrl() {
+        return "https://api.rasp.yandex.net/v3.0/thread/?apikey="+ API_KEY + "&uid="+uid;
     }
 }

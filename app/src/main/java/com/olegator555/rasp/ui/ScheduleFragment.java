@@ -79,11 +79,13 @@ public class ScheduleFragment extends Fragment {
                     JSONObject threadObject = trainInfo.getJSONObject("thread");
                     String number = threadObject.getString("number");
                     String title = threadObject.getString("title"); // Откуда - куда идет электричка
+                    String uid = threadObject.getString("uid");
                     JSONObject transportSubtypeObject = threadObject.getJSONObject("transport_subtype");
                     String type_title = transportSubtypeObject.getString("title");
                     tempList.add(new ScheduleModel(departure, departure_platform, arrival, arrival_platform,
-                            duration, stops, number, title, type_title));
+                            duration, stops, number, title, type_title, uid));
                     Log.d("Size from thread", String.valueOf(scheduleModels.size()));
+                    Log.d("Title + uid", title + uid);
 
                 }
                 scheduleModels.clear();
