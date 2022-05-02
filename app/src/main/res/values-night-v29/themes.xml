@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Rasp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Rasp" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -11,8 +12,21 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Stat us bar color. -->
         <item name="android:statusBarColor"
-              tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="android:forceDarkAllowed">false</item>
+              tools:targetApi="l">?attr/colorPrimaryVariant
+        </item>
         <!-- Customize your theme here. -->
+
+        <item name="actionMenuTextColor">
+            @color/white
+        </item>
     </style>
+    <style name="PrimaryBackgroundColor">
+        <item name="android:background">@drawable/night_background_gradient</item>
+    </style>
+    <style name="GradientButton">
+        <item name="android:background">
+            @drawable/search_button_gradient
+        </item>
+    </style>
+
 </resources>

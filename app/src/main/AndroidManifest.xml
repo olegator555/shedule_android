@@ -12,6 +12,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.Rasp">
+        <activity android:name=".StationSelectionActivityActivity">
+        </activity>
         <activity
                 android:name=".ActivityScheduleElementSelected"
                 android:exported="true"/>

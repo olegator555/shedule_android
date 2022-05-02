@@ -61,6 +61,7 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
 
     public void setDirection(String direction) {
         this.direction = direction;
+        formatDirection();
     }
 
     public String getStation_name() {
@@ -93,6 +94,12 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
         this.direction = direction;
         this.station_name = station_name;
         this.yandex_code = yandex_code;
+        formatDirection();
+    }
+
+    private void formatDirection() {
+        if(!(direction.contains(":") || direction.contains("-")))
+            direction = direction + " направление";
     }
 
     @Override

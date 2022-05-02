@@ -11,37 +11,52 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import com.olegator555.rasp.Adapter.AutoCompleteStationAdapter;
+import com.google.gson.Gson;
 import com.olegator555.rasp.DB.DBManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import static Utils.AppLevelUtilsAndConstants.IntentKeys.*;
-import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.IS_MAIN_ACTIVITY_VISITED;
+import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.*;
 
 public class MainActivity extends AppCompatActivity {
-    private AutoCompleteTextView from_editText;
-    private AutoCompleteTextView to_edit_text;
+    private final String DEPARTURE_TEXT_VIEW = "DepartureTextView";
+    private final String DESTINATION_TEXT_VIEW = "DestinationTextView";
+    private String json_string;
+    private boolean isRedirectedToSuggestionsList = false;
+    private TextView from_editText;
+    private TextView to_edit_text;
     private TextView date_editText;
     private TextView test_field;
     private Button find_button;
     private ConstraintLayout constraintLayout;
     private DBManager dbManager;
+    private ArrayList<ServerAnswerModel> model_list;
     private ServerAnswerModel selected_departure_item;
     private ServerAnswerModel selected_destination_item;
     private Date date;
 
     @Override
     public void onBackPressed() {
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.addCategory(Intent.CATEGORY_HOME);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
+        AppLevelUtilsAndConstants.emulateHomePressed(this);
 }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isRedirectedToSuggestionsList) {
+            isRedirectedToSuggestionsList = false;
+            setTextViewWithSelectedElement(DEPARTURE_STATION_GSON_STRING, DEPARTURE_TEXT_VIEW);
+            setTextViewWithSelectedElement(DESTINATION_STATION_GSON_STRING, DESTINATION_TEXT_VIEW);
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -54,27 +69,26 @@ public class MainActivity extends AppCompatActivity {
                     Boolean.class);
             Log.d("Saved", "Written to sp");
         }
-        from_editText = findViewById(R.id.from_editText);
-        to_edit_text = findViewById(R.id.to_editText);
-        date_editText = findViewById(R.id.editTextDate);
+        from_editText = findViewById(R.id.fromTextView);
+        to_edit_text = findViewById(R.id.toTextView);
+        date_editText = findViewById(R.id.dateEditText);
         test_field = findViewById(R.id.test_field);
         find_button = findViewById(R.id.show_result_button);
         date_editText.setOnClickListener(this::findButton);
         find_button.setOnClickListener(this::findButton);
         date_editText.setOnClickListener(this::showDateDialog);
-
+        Calendar calendar = Calendar.getInstance();
+        date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH));
 
         dbManager = new DBManager(this);
         selected_departure_item = new ServerAnswerModel();
         selected_destination_item = new ServerAnswerModel();
-        ArrayList<ServerAnswerModel> model_list = dbManager.getFromDb();
-        AutoCompleteStationAdapter adapter = new AutoCompleteStationAdapter(this, model_list);
-        to_edit_text.setAdapter(adapter);
-        from_editText.setAdapter(adapter);
-        from_editText.setOnItemClickListener((adapterView, view, i, l) ->
-                selected_departure_item = ((ServerAnswerModel) adapterView.getItemAtPosition(i)));
-        to_edit_text.setOnItemClickListener((adapterView, view, i, l) ->
-                selected_destination_item = ((ServerAnswerModel) adapterView.getItemAtPosition(i)));
+        model_list = dbManager.getFromDb();
+        from_editText.setOnClickListener(this::onTextViewClickListener);
+        to_edit_text.setOnClickListener(this::onTextViewClickListener);
+        setTextViewWithSelectedElement(DEPARTURE_STATION_GSON_STRING, DEPARTURE_TEXT_VIEW);
+        setTextViewWithSelectedElement(DESTINATION_STATION_GSON_STRING, DESTINATION_TEXT_VIEW);
 
         constraintLayout = findViewById(R.id.main_constraint_layout);
         constraintLayout.setOnTouchListener(new OnSwipeListener(this) {
@@ -100,7 +114,32 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    private void setTextViewWithSelectedElement(String json_key, String textViewName) {
+        if((AppLevelUtilsAndConstants.readFromPreferences(this,json_key, String.class)
+                != null)) {
+            json_string = (String)AppLevelUtilsAndConstants.readFromPreferences(this,json_key, String.class);
+            Gson gson = new Gson();
+            switch (textViewName) {
+                case DEPARTURE_TEXT_VIEW:
+                    selected_departure_item = gson.fromJson(json_string, ServerAnswerModel.class);
+                    from_editText.setText(selected_departure_item.getStation_name());
+                    break;
+                case DESTINATION_TEXT_VIEW:
+                    selected_destination_item= gson.fromJson(json_string, ServerAnswerModel.class);
+                    to_edit_text.setText(selected_destination_item.getStation_name());
+                    break;
+            }
 
+        }
+    }
+    @SuppressLint("NonConstantResourceId")
+    private void onTextViewClickListener(View view) {
+        Intent intent = new Intent(this,StationSelectionActivityActivity.class);
+        intent.putExtra("models_list", model_list);
+        intent.putExtra("caller_id", view.getId());
+        isRedirectedToSuggestionsList = true;
+        startActivity(intent);
+    }
 
     private void findButton(View view)  {
         Intent intent = new Intent(this, ScheduleActivity.class);

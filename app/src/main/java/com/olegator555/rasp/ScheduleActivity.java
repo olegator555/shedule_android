@@ -30,7 +30,6 @@ public class ScheduleActivity extends AppCompatActivity {
     private RecyclerView suburbans_list;
     private RequestQueue requestQueue;
     private ArrayList<ScheduleModel> scheduleModels = new ArrayList<>();
-    private ArrayList<ScheduleModel> tempList = new ArrayList<>();
     private ScheduleListAdapter adapter = new ScheduleListAdapter(scheduleModels);
     private Fragment selectedFragment;
 

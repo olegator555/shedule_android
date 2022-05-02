@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,7 @@ public class ScheduleFragment extends Fragment {
     private ArrayList<ScheduleModel> tempList;
     private ArrayList<ScheduleModel> scheduleModels;
     private ScheduleListAdapter adapter;
+    private ProgressBar progressBar;
 
     public ScheduleFragment(ServerAnswerModel departureItem, ServerAnswerModel destinationItem, Date dateItem) {
         this.departureItem = departureItem;
@@ -45,7 +47,8 @@ public class ScheduleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.schedule_fragment, container, false);
         recyclerView = view.findViewById(R.id.scheduleRecyclerView);
         scheduleModels = new ArrayList<>();
@@ -55,7 +58,7 @@ public class ScheduleFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         getSchedule(new UrlCreator(departureItem.getYandex_code(), destinationItem.getYandex_code(),dateItem)
-                .getScheduleUrl());
+                .getScheduleUrl());;
         return view;
     }
 
@@ -84,8 +87,6 @@ public class ScheduleFragment extends Fragment {
                     String type_title = transportSubtypeObject.getString("title");
                     tempList.add(new ScheduleModel(departure, departure_platform, arrival, arrival_platform,
                             duration, stops, number, title, type_title, uid));
-                    Log.d("Size from thread", String.valueOf(scheduleModels.size()));
-                    Log.d("Title + uid", title + uid);
 
                 }
                 scheduleModels.clear();

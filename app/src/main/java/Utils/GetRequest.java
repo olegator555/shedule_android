@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+
+@Deprecated
 public class GetRequest extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
@@ -26,12 +27,9 @@ public class GetRequest extends AsyncTask<String, String, String> {
             while ((str=bufferedReader.readLine())!=null)
                 sb.append(str).append('\n');
             return sb.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (connection !=null) {
                 connection.disconnect();
             }

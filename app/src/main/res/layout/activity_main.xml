@@ -5,8 +5,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/material_light_white"
         android:id="@+id/main_constraint_layout"
+        style="@style/PrimaryBackgroundColor"
         tools:context=".MainActivity">
     <TextView
             android:text="@string/main_header"
@@ -20,20 +20,37 @@
             android:fontFamily="@font/montserrat_bold"
             android:textColor="@color/black"
             android:textSize="25sp"/>
-    <Button
-            android:text="@string/find"
+    <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/show_result_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="setFind_button"
-            app:layout_constraintHorizontal_bias="0.532"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:gravity="center"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/GradientButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:cardCornerRadius="10sp"
+            android:layout_marginTop="100dp">
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/search_button_gradient">
+            <Button
+                    android:text="@string/showSchedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/show_result_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintHorizontal_bias="0.532"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/montserrat_bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    android:layout_marginStart="10sp"
+                    android:layout_marginEnd="10sp"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView android:layout_width="200sp"
+    <androidx.cardview.widget.CardView android:layout_width="match_parent"
                                        android:layout_height="wrap_content"
                                        app:layout_constraintEnd_toEndOf="parent"
                                        app:layout_constraintStart_toStartOf="parent"
@@ -42,59 +59,85 @@
                                        android:id="@+id/cardView"
                                        app:layout_constraintTop_toBottomOf="@+id/main_header"
                                        android:layout_marginTop="50dp">
-        <RelativeLayout android:layout_width="wrap_content"
+        <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-            <AutoCompleteTextView
+            <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete"
-                    android:background="@color/material_amber_100"
-                    android:ems="10"
+                    android:inputType="textPersonName"
                     android:textColor="@color/black"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
                     android:layout_marginTop="15sp"
                     android:hint="@string/from"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:fontFamily="@font/montserrat"
                     android:id="@+id/from_editText"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:imeOptions="actionNext"
-                    android:layout_marginBottom="10sp"
                     android:paddingHorizontal="@dimen/cardview_default_elevation"/>
-            <AutoCompleteTextView
-                    android:layout_width="match_parent"
+            <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textAutoComplete"
+                    android:inputType="textPersonName"
                     android:hint="@string/to"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="20sp"
-                    android:layout_below="@id/from_editText"
-                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:layout_below="@+id/fromTextView"
                     android:ems="10"
                     android:id="@+id/to_editText"
-                    android:background="@color/material_amber_100"
+                    android:background="@android:color/transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/from_editText"
                     android:imeOptions="actionNext"
-                    android:layout_marginTop="10sp"/>
+                    android:layout_marginTop="20dp"/>
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                        android:layout_below="@+id/to_editText"
+                        android:layout_marginTop="5sp"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textSize="20sp"
+                        android:text="@string/click_to_select_station"
+                      android:id="@+id/toTextView"
+            >
+            </TextView>
             <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textNoSuggestions"
+                    android:inputType="textPersonName"
                     android:ems="10"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="20sp"
-                    android:layout_below="@id/to_editText"
-                    android:hint="@string/date"
-                    android:background="@color/material_amber_100"
-                    android:layout_marginBottom="15sp"
+                    android:textSize="10sp"
+                    android:layout_below="@id/toTextView"
                     android:layout_marginTop="20sp"
-                    android:id="@+id/editTextDate"
+                    android:text="@string/date"
+                    android:background="@android:color/transparent"
                     android:imeOptions="actionSearch"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/from_editText"/>
+                    android:id="@+id/dateHeader">
+            </TextView>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_below="@+id/dateHeader"
+                android:layout_marginTop="5sp"
+                      android:text="@string/today"
+                      android:fontFamily="@font/montserrat_bold"
+                      android:textSize="20sp"
+                      android:layout_marginBottom="15sp"
+                      android:id="@+id/dateEditText"
+                >
+            </TextView>
+            <TextView
+                    android:text="@string/click_to_select_station"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fromTextView"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textSize="20sp"
+                    android:gravity="start"
+                    android:layout_marginTop="1sp"
+                    android:layout_below="@+id/from_editText"
+                    android:layout_alignParentStart="true"/>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
@@ -105,6 +148,8 @@
             android:id="@+id/test_field"
             app:layout_constraintTop_toBottomOf="@+id/show_result_button"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="173dp" android:layout_marginEnd="179dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="20dp"/>
+            android:layout_marginStart="173dp"
+            android:layout_marginEnd="179dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

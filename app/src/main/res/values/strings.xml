@@ -24,4 +24,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="straight_to">Туда</string>
     <string name="from_straight">Обратно</string>
+    <string name="today">Сегодня</string>
+    <string name="click_to_select_station">Нажмите для выбора станции</string>
+    <string name="showSchedule">Показать расписание</string>
 </resources>

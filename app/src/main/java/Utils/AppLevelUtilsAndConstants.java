@@ -1,6 +1,7 @@
 package Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -9,11 +10,19 @@ public class AppLevelUtilsAndConstants {
     public static class PreferencesKeys {
         public static final String JSON_STRING_KEY = "JsonString";
         public static final String IS_MAIN_ACTIVITY_VISITED = "IsMainActivityVisited";
+        public static final String DEPARTURE_STATION_GSON_STRING = "DepartureStationGsonString";
+        public static final String DESTINATION_STATION_GSON_STRING = "DestinationStationGsonString";
     }
     public static class IntentKeys {
         public static final String DEPARTURE_ITEM = "Destination_item";
         public static final String DESTINATION_ITEM = "Arrival_item";
         public static final String DATE_ITEM = "Date_item";
+    }
+    public static void emulateHomePressed(Context context) {
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.addCategory(Intent.CATEGORY_HOME);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);
     }
     public static void writeToPreferences(Context context, String key, Object value, Class<?> clazz){
             SharedPreferences sharedPreferences = context.getSharedPreferences(key, MODE_PRIVATE);
