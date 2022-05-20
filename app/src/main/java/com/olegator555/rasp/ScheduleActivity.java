@@ -1,7 +1,6 @@
 package com.olegator555.rasp;
 
 import Model.Date;
-import Model.ScheduleModel;
 import Model.ServerAnswerModel;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -10,15 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import com.android.volley.RequestQueue;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.olegator555.rasp.Adapter.ScheduleListAdapter;
 import com.olegator555.rasp.ui.ScheduleFragment;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import static Utils.AppLevelUtilsAndConstants.IntentKeys.*;
 
@@ -27,11 +22,8 @@ public class ScheduleActivity extends AppCompatActivity {
     private ServerAnswerModel destination_item;
     private Date date;
     private TextView header_text_view;
-    private RecyclerView suburbans_list;
-    private RequestQueue requestQueue;
-    private ArrayList<ScheduleModel> scheduleModels = new ArrayList<>();
-    private ScheduleListAdapter adapter = new ScheduleListAdapter(scheduleModels);
-    private Fragment selectedFragment;
+    private Fragment straightFragment;
+    private Fragment backwardFragment;
 
 
     @Override
@@ -48,8 +40,8 @@ public class ScheduleActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnItemSelectedListener(navbarListener);
-        selectedFragment = new ScheduleFragment(departure_item, destination_item, date);
-        getSupportFragmentManager().beginTransaction().replace(R.id.listContainer, selectedFragment).commit();
+        straightFragment = new ScheduleFragment(departure_item, destination_item, date, this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.listContainer, straightFragment).commit();
     }
 
     private NavigationBarView.OnItemSelectedListener navbarListener = new NavigationBarView.OnItemSelectedListener() {
@@ -60,15 +52,20 @@ public class ScheduleActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     header_text_view.setText(MessageFormat.format("{0} - {1}", departure_item.getStation_name(),
                             destination_item.getStation_name()));
-                    selectedFragment = new ScheduleFragment(departure_item, destination_item, date);
+                    if(straightFragment==null)
+                        straightFragment = new ScheduleFragment(departure_item, destination_item, date, ScheduleActivity.this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.listContainer, straightFragment)
+                            .commit();
                     break;
                 case R.id.navigation_backwards:
                     header_text_view.setText(MessageFormat.format("{0} - {1}", destination_item.getStation_name(),
                             departure_item.getStation_name()));
-                    selectedFragment = new ScheduleFragment(destination_item, departure_item, date);
+                    if(backwardFragment==null)
+                        backwardFragment = new ScheduleFragment(destination_item, departure_item, date, ScheduleActivity.this);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.listContainer, backwardFragment)
+                            .commit();
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.listContainer, selectedFragment).commit();
             return true;
         }
     };

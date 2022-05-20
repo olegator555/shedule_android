@@ -1,30 +1,29 @@
 package com.olegator555.rasp.Adapter;
 
 import Model.ScheduleModel;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.Gson;
 import com.olegator555.rasp.ActivityScheduleElementSelected;
 import com.olegator555.rasp.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapter.ScheduleListViewHolder>{
     private List<ScheduleModel> modelList;
-    private boolean isListFilled = false;
     private int currentHour;
     private int currentMinutes;
     private int offsetIndex;
-    private int estimated;
-
+    private long estimated;
+    private Date currentTime;
     public ScheduleListAdapter(List<ScheduleModel> modelsList) {
         modelList = new ArrayList<>(modelsList);
     }
@@ -34,6 +33,7 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
     public ScheduleListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
          View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.suburbans_list_layout, parent,
                  false);
+         currentTime = new Date();
          return new ScheduleListViewHolder(view);
     }
 
@@ -47,36 +47,19 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
         return modelList.size();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public int updateModelList(@NonNull ArrayList<ScheduleModel> modelList) {
-        this.modelList = modelList;
-        notifyDataSetChanged();
-        isListFilled = true;
-        currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        currentMinutes = Calendar.getInstance().get(Calendar.MINUTE);
-        for (ScheduleModel element:modelList
-             ) {
-            if(element.getDeparture_hour()==currentHour)
-                if(element.getDeparture_minute()<currentMinutes) {
-                    offsetIndex++;
-                }
-            if(element.getDeparture_hour()<currentHour)
-                offsetIndex++;
-        }
-        Log.d("Cal hour", String.valueOf(currentHour));
-        Log.d("Cal minute", String.valueOf(currentMinutes));
-        return offsetIndex;
-    }
+
+
 
 
     class ScheduleListViewHolder extends RecyclerView.ViewHolder {
-        private TextView departureTextView;
-        private TextView arrivalTextView;
-        private TextView travelTime;
-        private TextView departurePlatform;
-        private TextView arrivalPlatform;
-        private TextView typeTitle;
-        private TextView estimatedTime;
+        private final TextView departureTextView;
+        private final TextView arrivalTextView;
+        private final TextView travelTime;
+        private final TextView departurePlatform;
+        private final TextView arrivalPlatform;
+        private final TextView typeTitle;
+        private final TextView estimatedTime;
+        private final SimpleDateFormat simpleDateFormat;
 
         public ScheduleListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,22 +70,42 @@ public class ScheduleListAdapter extends RecyclerView.Adapter<ScheduleListAdapte
             arrivalPlatform = itemView.findViewById(R.id.arrivalPlatformTextView);
             typeTitle = itemView.findViewById(R.id.typeTitleTextView);
             estimatedTime = itemView.findViewById(R.id.estimatedTime);
+            simpleDateFormat = new SimpleDateFormat("HH:mm");
             itemView.setOnClickListener(view -> {
+                Gson gson = new Gson();
+                String serializedElement = gson.toJson(modelList.get(getAdapterPosition()));
                 Intent intent = new Intent(itemView.getContext(), ActivityScheduleElementSelected.class);
-                intent.putExtra("SelectedElement", modelList.get(getAdapterPosition()));
+                intent.putExtra("SelectedElement", serializedElement);
                 view.getContext().startActivity(intent);
             });
 
         }
 
         void bind(ScheduleModel element) {
-            departureTextView.setText(element.getDeparture());
-            arrivalTextView.setText(element.getArrival());
+            try {
+                arrivalTextView.setText(simpleDateFormat.format(element.getArrival()));
+            } catch (NullPointerException e) {
+                arrivalTextView.setText("Нет данных");
+            }
+            try {
+                departureTextView.setText(simpleDateFormat.format(element.getDeparture()));
+            } catch (NullPointerException e) {
+                departureTextView.setText("Нет данных");
+            }
             travelTime.setText(String.valueOf(element.getDuration()));
             departurePlatform.setText(element.getDeparture_platform());
             arrivalPlatform.setText(element.getArrival_platform());
             typeTitle.setText(element.getType_title());
-            estimatedTime.setText(String.valueOf(estimated));
+            estimated = (element.getDeparture().getTime() - currentTime.getTime())/60000;
+            if(estimated>0) {
+                if (estimated<60)
+                    estimatedTime.setText(String.format("Через %d минут", estimated));
+                else {
+                    estimatedTime.setText(String.format("Через %d час %d минут", estimated/60, estimated%60));
+                }
+            }
+            else
+                estimatedTime.setText("Ушла");
         }
     }
 

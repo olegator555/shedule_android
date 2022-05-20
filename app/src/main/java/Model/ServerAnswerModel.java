@@ -87,7 +87,8 @@ public class ServerAnswerModel implements Parcelable, Cloneable {
         return 0;
     }
 
-    public ServerAnswerModel(String country, String region, String settlement, String direction, String station_name, String yandex_code) {
+    public ServerAnswerModel(String country, String region, String settlement, String direction, String station_name,
+                             String yandex_code) {
         this.country = country;
         this.region = region;
         this.settlement = settlement;

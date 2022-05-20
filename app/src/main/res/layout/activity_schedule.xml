@@ -22,13 +22,13 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="40dp"/>
     <RelativeLayout android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 app:layout_constraintStart_toStartOf="parent"
-                 app:layout_constraintEnd_toEndOf="parent"
-                 android:id="@+id/listContainer"
-                 app:layout_constraintHorizontal_bias="0.0"
-                 app:layout_constraintTop_toBottomOf="@+id/ScheduleHeader"
-                    android:layout_marginTop="15dp">
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/listContainer"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintTop_toBottomOf="@+id/ScheduleHeader"
+                    android:layout_marginTop="15dp" app:layout_constraintBottom_toTopOf="@+id/bottom_nav">
         <TextView
                 android:text="Загрузка расписания..."
                 android:layout_width="wrap_content"
@@ -44,7 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/progressBar" android:visibility="invisible"/>
+                android:id="@+id/progressBar"
+                android:visibility="invisible"/>
     </RelativeLayout>
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:layout_width="match_parent"

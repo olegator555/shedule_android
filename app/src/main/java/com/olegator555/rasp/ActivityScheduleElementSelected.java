@@ -2,7 +2,9 @@ package com.olegator555.rasp;
 
 import Model.ScheduleModel;
 import Model.StationInRouteModel;
+import Utils.AsyncDataReceiver;
 import Utils.UrlCreator;
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,93 +12,70 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.gson.Gson;
+import com.olegator555.rasp.Adapter.RouteStationsRecyclerViewAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ActivityScheduleElementSelected extends AppCompatActivity {
     private TextView textView;
     private ProgressBar progressBar;
-    private JSONObject result;
     private ImageButton backButton;
     private String number;
     private String title;
     private String uid;
     private String days;
-    private List<StationInRouteModel> routeStationsList;
+    private RecyclerView routeStationsRecyclerView;
+    private ArrayList<StationInRouteModel> routeStationsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_element_selected);
-        ScheduleModel model = getIntent().getParcelableExtra("SelectedElement");
-        textView = findViewById(R.id.headerTextViev);
+        Gson gson = new Gson();
+        String serializedString = getIntent().getStringExtra("SelectedElement");
+        ScheduleModel model = gson.fromJson(serializedString, ScheduleModel.class);
+        textView = findViewById(R.id.headerTextView);
         progressBar = findViewById(R.id.progressBar3);
         backButton = findViewById(R.id.backButton);
+        routeStationsRecyclerView = findViewById(R.id.routeStationsRecyclerView);
+        routeStationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
         String url = new UrlCreator(model.getUid()).getRouteUrl();
         Log.d("Uid url", url);
-        new GetJsonObject(url).start();
+        new GetJsonObject(url, ActivityScheduleElementSelected.this).start();
         backButton.setOnClickListener(view -> onBackPressed());
     }
-    private void onThreadCompleted() {
+    private void onDataReceived() {
         progressBar.setVisibility(View.GONE);
         textView.setText(title);
         textView.setVisibility(View.VISIBLE);
+        routeStationsRecyclerView.setAdapter(new RouteStationsRecyclerViewAdapter(routeStationsList));
+        routeStationsRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    class GetJsonObject extends Thread {
-        private final String url;
+    class GetJsonObject extends AsyncDataReceiver {
 
-        GetJsonObject(String url) {
-            this.url = url;
+        public GetJsonObject(String url, Activity activity) {
+            super(url, activity);
         }
 
-        private JSONObject getJsonObject(String str_url) {
-            HttpURLConnection connection = null;
-            BufferedReader bufferedReader = null;
+        @Override
+        public void parseJson(JSONObject receivedObject) {
+            if(receivedObject==null)
+                throw new RuntimeException("Bad request to api");
             try {
-                URL url = new URL(str_url);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-                InputStream inputStream = connection.getInputStream();
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder sb = new StringBuilder();
-                String str;
-                while ((str=bufferedReader.readLine())!=null)
-                    sb.append(str).append('\n');
-                return new JSONObject(sb.toString());
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection !=null) {
-                    connection.disconnect();
-                }
-                if (bufferedReader!=null) {
-                    try {
-                        bufferedReader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-        private void parseJson() {
-            try {
-                number = result.getString("number");
-                title = result.getString("title");
-                uid = result.getString("uid");
-                days = result.getString("days");
-                final JSONArray stops = result.getJSONArray("stops");
+                number = receivedObject.getString("number");
+                title = receivedObject.getString("title");
+                uid = receivedObject.getString("uid");
+                days = receivedObject.getString("days");
+                final JSONArray stops = receivedObject.getJSONArray("stops");
                 routeStationsList = new ArrayList<>();
                 for(int i=0;i<stops.length(); i++) {
                     final JSONObject current_stop = stops.getJSONObject(i);
@@ -115,11 +94,10 @@ public class ActivityScheduleElementSelected extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
         @Override
-        public void run() {
-            result = getJsonObject(url);
-            parseJson();
-            runOnUiThread(ActivityScheduleElementSelected.this::onThreadCompleted);
+        public void onThreadCompleted() {
+            onDataReceived();
         }
     }
 }

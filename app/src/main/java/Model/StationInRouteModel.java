@@ -1,8 +1,14 @@
 package Model;
 
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StationInRouteModel {
-    private final String arrival;
-    private final String departure;
+    private Date arrival;
+    private Date departure;
     private final int duration;
     private final String platform;
     private final String station_code;
@@ -10,19 +16,28 @@ public class StationInRouteModel {
 
     public StationInRouteModel(String arrival, String departure, int duration, String platform, String station_code,
                                String station_title) {
-        this.arrival = arrival;
-        this.departure = departure;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Log.d("arrival: ", arrival);
+        Log.d("departure: ", departure);
+        try {
+            if(arrival!=null)
+                this.arrival = format.parse(arrival);
+            if(departure!=null)
+                this.departure = format.parse(departure);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.duration = duration;
         this.platform = platform;
         this.station_code = station_code;
         this.station_title = station_title;
     }
 
-    public String getArrival() {
+    public Date getArrival() {
         return arrival;
     }
 
-    public String getDeparture() {
+    public Date getDeparture() {
         return departure;
     }
 
