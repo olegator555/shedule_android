@@ -6,6 +6,7 @@
     </uses-permission>
 
     <application
+            android:networkSecurityConfig="@xml/trusted_certificates_config"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
