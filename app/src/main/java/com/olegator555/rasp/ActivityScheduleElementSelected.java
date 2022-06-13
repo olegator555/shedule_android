@@ -67,15 +67,16 @@ public class ActivityScheduleElementSelected extends AppCompatActivity {
         }
 
         @Override
-        public void parseJson(JSONObject receivedObject) {
+        public void parseJson(String receivedObject) {
             if(receivedObject==null)
                 throw new RuntimeException("Bad request to api");
             try {
-                number = receivedObject.getString("number");
-                title = receivedObject.getString("title");
-                uid = receivedObject.getString("uid");
-                days = receivedObject.getString("days");
-                final JSONArray stops = receivedObject.getJSONArray("stops");
+                JSONObject jsonObject = new JSONObject(receivedObject);
+                number = jsonObject.getString("number");
+                title = jsonObject.getString("title");
+                uid = jsonObject.getString("uid");
+                days = jsonObject.getString("days");
+                final JSONArray stops = jsonObject.getJSONArray("stops");
                 routeStationsList = new ArrayList<>();
                 for(int i=0;i<stops.length(); i++) {
                     final JSONObject current_stop = stops.getJSONObject(i);

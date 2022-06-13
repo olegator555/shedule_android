@@ -1,3 +1,4 @@
+/*
 package com.olegator555.rasp.DB;
 
 import Model.ServerAnswerModel;
@@ -17,14 +18,12 @@ import java.util.concurrent.ExecutionException;
 import static com.olegator555.rasp.DB.TableModel.*;
 
 public class DBManager {
-    private final DBProvider dbProvider;
     private SQLiteDatabase database;
     private final Context context;
     public ArrayList<ServerAnswerModel> model_list = new ArrayList<>();
     public static final String SUCCESSFULLY_INSERTED = "SuccessfullyInserted";
 
     public DBManager(Context context) {
-        dbProvider = new DBProvider(context);
         this.context = context;
     }
     public void openDB() {
@@ -41,6 +40,7 @@ public class DBManager {
                 return null;
             }
         });
+        new AsyncDBWriter(database, context).insert(ServerAnswerModel.class);
     }
     public ArrayList<ServerAnswerModel> getFromDb() {
         AsyncDBProvider asyncDBProvider = new AsyncDBProvider();
@@ -124,3 +124,4 @@ public class DBManager {
         }
     }
 }
+*/

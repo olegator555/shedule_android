@@ -49,9 +49,10 @@ public class ScheduleFragment extends Fragment {
         scheduleModels = new ArrayList<>();
         new AsyncDataReceiver(url, currentActivity) {
             @Override
-            public void parseJson(JSONObject receivedObject) {
+            public void parseJson(String receivedObject) {
                 try {
-                    JSONArray segmentsArray = receivedObject.getJSONArray("segments");
+                    JSONObject jsonObject = new JSONObject(receivedObject);
+                    JSONArray segmentsArray = jsonObject.getJSONArray("segments");
                     for(int i= 0; i<segmentsArray.length(); i++) {
                         JSONObject trainInfo = segmentsArray.getJSONObject(i);
                         String departure = trainInfo.getString("departure");

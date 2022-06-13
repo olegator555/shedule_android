@@ -2,17 +2,20 @@ package Utils;
 
 import Model.ServerAnswerModel;
 import android.content.Context;
-import com.olegator555.rasp.DB.DBManager;
+import com.google.gson.stream.JsonReader;
+import com.olegator555.rasp.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class JsonParser  {
     private JSONArray topLevelJsonArray;
-    private List<ServerAnswerModel> stations_list;
+    private ArrayList<Object> stations_list;
     Context context;
     String selected_country, selected_region;
 
@@ -57,10 +60,12 @@ public class JsonParser  {
         }
         return result;
     }
-    private void parseJson() {
+    public ArrayList<Object> parseJson() {
         stations_list = new ArrayList<>();
+        ArrayList<ServerAnswerModel> temp_list = new ArrayList<>();
         for(int i = 0; i< topLevelJsonArray.length(); i++){
             try {
+                JsonReader jsonReader = new JsonReader(new BufferedReader(new FileReader(context.getResources().getResourceName(R.raw.local_keystore))));
                 String country = topLevelJsonArray.getJSONObject(i).getString("title");
                 if(country.equals(selected_country)) {
                     JSONObject regionsLevelJsonObject = topLevelJsonArray.getJSONObject(i);
@@ -81,9 +86,10 @@ public class JsonParser  {
                                         JSONObject codeLevelJsonObject = stationsLevelJsonArray.getJSONObject(z);
                                         JSONObject yandex_code_jbject = codeLevelJsonObject.getJSONObject("codes");
                                         String yandex_code = yandex_code_jbject.getString("yandex_code");
-                                        ServerAnswerModel serverAnswerModel = new ServerAnswerModel(country, region, settlement,
-                                                direction, station_name, yandex_code);
+                                        ServerAnswerModel serverAnswerModel = new ServerAnswerModel(country, region,
+                                                settlement, direction, station_name, yandex_code);
                                         stations_list.add(serverAnswerModel);
+                                        temp_list.add(serverAnswerModel);
                                     }
                                 }
                             }
@@ -94,18 +100,13 @@ public class JsonParser  {
 
                     }
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | FileNotFoundException e) {
                 e.printStackTrace();
             }
 
         }
+        return stations_list;
 
-    }
-    public void writeToDb(String selected_country, String selected_region) {
-        this.selected_country = selected_country;
-        this.selected_region = selected_region;
-        this.parseJson();
-        new DBManager(context).insertToDb(stations_list);
     }
 
 }

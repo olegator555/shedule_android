@@ -18,7 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.gson.Gson;
-import com.olegator555.rasp.DB.DBManager;
+import com.olegator555.rasp.DB.AsyncDBWriter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView test_field;
     private Button find_button;
     private ConstraintLayout constraintLayout;
-    private DBManager dbManager;
-    private ArrayList<ServerAnswerModel> model_list;
+    private ArrayList<Object> model_list;
     private ServerAnswerModel selected_departure_item;
     private ServerAnswerModel selected_destination_item;
     private Date date;
@@ -69,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
                     Boolean.class);
             Log.d("Saved", "Written to sp");
         }
+        new AsyncDBWriter(this, AsyncDBWriter.READ, ServerAnswerModel.class) {
+            @Override
+            public void onThreadCompleted(ArrayList<Object> objects) {
+                model_list = objects;
+            }
+        }.start();
         from_editText = findViewById(R.id.fromTextView);
         to_edit_text = findViewById(R.id.toTextView);
         date_editText = findViewById(R.id.dateEditText);
@@ -81,10 +86,8 @@ public class MainActivity extends AppCompatActivity {
         date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
                 calendar.get(Calendar.DAY_OF_MONTH));
 
-        dbManager = new DBManager(this);
         selected_departure_item = new ServerAnswerModel();
         selected_destination_item = new ServerAnswerModel();
-        model_list = dbManager.getFromDb();
         from_editText.setOnClickListener(this::onTextViewClickListener);
         to_edit_text.setOnClickListener(this::onTextViewClickListener);
         setTextViewWithSelectedElement(DEPARTURE_STATION_GSON_STRING, DEPARTURE_TEXT_VIEW);

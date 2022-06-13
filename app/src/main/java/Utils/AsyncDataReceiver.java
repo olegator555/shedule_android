@@ -1,8 +1,7 @@
 package Utils;
 
 import android.app.Activity;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +20,8 @@ public abstract class AsyncDataReceiver extends Thread {
     }
 
 
-    private JSONObject getJsonObject(String str_url) {
+    private String getJsonObject(String str_url) {
+        Log.d("URL", str_url);
         HttpURLConnection connection = null;
         BufferedReader bufferedReader = null;
         try {
@@ -34,8 +34,8 @@ public abstract class AsyncDataReceiver extends Thread {
             String str;
             while ((str=bufferedReader.readLine())!=null)
                 sb.append(str).append('\n');
-            return new JSONObject(sb.toString());
-        } catch (IOException | JSONException e) {
+            return sb.toString();
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (connection !=null) {
@@ -51,11 +51,11 @@ public abstract class AsyncDataReceiver extends Thread {
         }
         return null;
     }
-    public abstract void parseJson(JSONObject receivedObject);
+    public abstract void parseJson(String receivedObject);
     public abstract void onThreadCompleted();
     @Override
     public void run() {
-        JSONObject receivedObject = getJsonObject(url);
+        String receivedObject = getJsonObject(url);
         parseJson(receivedObject);
         activity.runOnUiThread(this::onThreadCompleted);
     }

@@ -1,8 +1,7 @@
 package com.olegator555.rasp;
 
-import Utils.GetRequest;
+import Utils.AsyncDataReceiver;
 import Utils.UrlCreator;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.IS_MAIN_ACTIVITY_VISITED;
-import static Utils.AppLevelUtilsAndConstants.PreferencesKeys.JSON_STRING_KEY;
 import static Utils.AppLevelUtilsAndConstants.readFromPreferences;
-import static Utils.AppLevelUtilsAndConstants.writeToPreferences;
 
 
 public class StartScreen extends AppCompatActivity {
@@ -40,8 +37,22 @@ public class StartScreen extends AppCompatActivity {
         else {
             progressBar.setVisibility(View.VISIBLE);
             Log.d("Bool", "Not written yet");
-            GetRequest stations_list_request = new StationLisRequest();
-            stations_list_request.execute(new UrlCreator().getStationsListUrl());
+            new AsyncDataReceiver(new UrlCreator().getStationsListUrl(), this) {
+                @Override
+                public void parseJson(String receivedObject) {
+                    Log.d("GET", "VISITED");
+                    /*Gson gson = new Gson();
+                    Type listType = new TypeToken<List<ServerAnswerModel>>(){}.getType();
+                    List<ServerAnswerModel> models = gson.fromJson(receivedObject, listType);
+                    new AsyncDBWriter(StartScreen.this, AsyncDBWriter.INSERT, ServerAnswerModel.class).start();*/
+                }
+
+                @Override
+                public void onThreadCompleted() {
+                    Intent intent = new Intent(StartScreen.this, First_launch.class);
+                    startActivity(intent);
+                }
+            };
         }
     }
 
@@ -51,24 +62,4 @@ public class StartScreen extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class StationLisRequest extends GetRequest {
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-
-        protected void onPostExecute(String res) {
-            super.onPostExecute(res);
-            Intent intent = new Intent(StartScreen.this, First_launch.class);
-            writeToPreferences(getBaseContext(), JSON_STRING_KEY, res, String.class);
-            startActivity(intent);
-        }
-    }
 }

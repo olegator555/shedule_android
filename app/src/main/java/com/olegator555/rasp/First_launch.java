@@ -1,12 +1,13 @@
 package com.olegator555.rasp;
 
+import Model.ServerAnswerModel;
 import Utils.AppLevelUtilsAndConstants;
 import Utils.JsonParser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
-import com.olegator555.rasp.DB.DBManager;
+import com.olegator555.rasp.DB.AsyncDBWriter;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,6 @@ public class First_launch extends AppCompatActivity {
     private String selected_region;
     private boolean isPressed = false;
     private ImageButton button;
-    private DBManager dbManager;
 
     @Override
     public void onBackPressed() {
@@ -50,9 +50,16 @@ public class First_launch extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment2).commit();
             button.setOnClickListener(view1 -> {
                 selected_region = fragment2.get_field_data();
-                jsonParser.writeToDb(selected_country, selected_region);
-                Intent intent = new Intent(First_launch.this, MainActivity.class);
-                startActivity(intent);
+                ArrayList<Object> models = jsonParser.parseJson();
+                new AsyncDBWriter(this, AsyncDBWriter.INSERT, ServerAnswerModel.class, models) {
+                    @Override
+                    public void onThreadCompleted() {
+                        Intent intent = new Intent(First_launch.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                }.start();
+
             });
         });
     }

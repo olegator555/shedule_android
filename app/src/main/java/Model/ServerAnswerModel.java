@@ -2,13 +2,20 @@ package Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.olegator555.rasp.DB.DatabaseTransferable;
 
 public class ServerAnswerModel implements Parcelable, Cloneable {
+    @DatabaseTransferable(sqlType = "TEXT")
     private String country;
+    @DatabaseTransferable(sqlType = "TEXT")
     private String region;
+    @DatabaseTransferable(sqlType = "TEXT")
     private String settlement;
+    @DatabaseTransferable(sqlType = "TEXT")
     private String direction;
+    @DatabaseTransferable(sqlType = "TEXT")
     private String station_name;
+    @DatabaseTransferable(sqlType = "TEXT", primaryKey = true)
     private String yandex_code;
 
     public ServerAnswerModel(Parcel in) {
